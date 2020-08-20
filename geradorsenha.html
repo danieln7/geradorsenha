@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	
+	<title>Gerador de senha</title>
+	<link rel="stylesheet" type="text/css" href="src/geral.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="src/geral.js"></script>
+	<script>
+		$(document).ready(function() {
+
+			var minPwLength = 6; // mínimo de caracteres
+			var maxPwLength = 100; // máximo de caracteres
+			var defaultPwLength = 20; // padrão
+			var sug = [10, 20, 30, 40, 50]; // valores sugeridos para o tamanho da senha
+			var exibirSugeridos = true; // exibe os valores sugeridos
+
+			document.querySelector("input[type=number]").addEventListener("keypress", function(evt) {
+				if (evt.which < 48 || evt.which > 57) {
+					evt.preventDefault();
+				}
+			});
+
+			if (minPwLength < maxPwLength) {
+
+				var input = true;
+
+				/* Se o tamanho mínimo for maior que o padrão, define o padrão como sendo o mínimo */
+				if (minPwLength > defaultPwLength) defaultPwLength = minPwLength;
+
+				/* Se o tamanho máximo for menor que o padrão, define o padrão como sendo o máximo */
+				if (maxPwLength < defaultPwLength) defaultPwLength = maxPwLength;
+
+				/* Exibe os botões com os valores sugeridos */
+				if (exibirSugeridos) {
+
+					$("#itemLength").append("<button value='" + minPwLength + "' id='btnSetValMin' class='geradorsenha btnSetVal'>Mín.</button>");
+
+					for (var i = 0; i < sug.length; i++) {
+						if (minPwLength < sug[i] && maxPwLength > sug[i]) $("#itemLength").append("<button value='" + sug[i] + "' id='btnSetVal" + sug[i] + "' class='geradorsenha btnSetVal'>" + sug[i] + "</button>");
+					}
+
+					$("#itemLength").append("<button value='" + maxPwLength + "' id='btnSetValMax' class='geradorsenha btnSetVal'>Máx.</button>");
+
+				}
+
+				$("#itemLength").prepend("Tamanho (entre " + minPwLength + " e " + maxPwLength + "): ");
+
+				$("#pwlength").attr({
+					min: minPwLength,
+					max: maxPwLength,
+					value: defaultPwLength
+				});
+
+				$(".btnSetVal").click(function() {
+					$("#pwlength").val($(this).val());
+				});
+
+			} else {
+
+				var input = false;
+
+				maxPwLength = minPwLength;
+
+				$("#itemLength").prepend("Tamanho: " + minPwLength);
+
+				$("#pwlength").attr({
+					value: minPwLength,
+					hidden: true
+				});
+
+			}
+
+			function makeid() {
+				var text = "";
+				var pwlength = $("#pwlength").val();
+				var s1 = s2 = s3 = s4 = "";
+
+				if (input) {
+
+					/* Garante que o tamanho esteja entre os valores mínimo e máximo */
+					if (pwlength > maxPwLength) pwlength = maxPwLength;
+					else if (pwlength < minPwLength) pwlength = minPwLength;
+
+					$("#pwlength").val(pwlength);
+
+				}
+
+				if ($("#uppercase").prop('checked')) s1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+				if ($("#lowercase").prop('checked')) s2 = "abcdefghijklmnopqrstuvwxyz";
+
+				if ($("#numbers").prop('checked')) s3 = "01234567890123456789";
+
+				if ($("#symbols").prop('checked')) s4 = "!@#$%&*=+?!@#$%&*=+?";
+
+				var possible = s1 + s2 + s3 + s4;
+
+				/* Remove os caracteres 0, 1, i, I, l, L, o, O se a opção estiver selecionada */
+				if ($("#similar").prop('checked')) possible = possible.replace(/0|1|i|I|l|L|o|O/g, '');
+
+				for (var i = 0; i < pwlength; i++) {
+					text += possible.charAt(Math.floor(Math.random() * possible.length));
+				}
+
+				return text;
+			}
+
+			/* Gera a senha ao apertar Enter no campo numérico */
+			$("#pwlength").keypress(function(e) {
+				if (e.which == 13) {
+					$("#btnPw").click();
+				}
+			});
+
+			$("#btnPw").click(function() {
+				$("#r1").val(makeid);
+
+				/* Seleciona e copia a senha se a opção estiver selecionada */
+				if ($("#copy").prop('checked')) {
+					$("#r1").select();
+					document.execCommand("copy");
+				}
+
+			});
+
+		});
+	</script>
+
+</head>
+
+<body class="geradorsenha">
+
+	<div class="container geradorsenha">
+
+		<div class="cabecalho geradorsenha">
+			Gerador de senha
+		</div>
+
+		<div class="main geradorsenha">
+			<div class="item" id="itemLength"><input type="number" name="pwlength" id="pwlength" class="variavel"></div>
+			<div class="item"><label class="itemSenha"><input type="checkbox" name="uppercase" id="uppercase" checked> Incluir Letras Maiúsculas</label></div>
+			<div class="item"><label class="itemSenha"><input type="checkbox" name="lowercase" id="lowercase" checked> Incluir Letras Minúsculas</label></div>
+			<div class="item"><label class="itemSenha"><input type="checkbox" name="numbers" id="numbers" checked> Incluir Números</label></div>
+			<div class="item"><label class="itemSenha"><input type="checkbox" name="symbols" id="symbols" checked> Incluir Símbolos (! @ # $ % & * = + ?)</label></div>
+			<div class="item"><label class="itemSenha"><input type="checkbox" name="similar" id="similar"> Excluir Caracteres Similares (0, 1, i, I, l, L, o, O)</label></div>
+			<div class="item"><label class="itemSenha"><input type="checkbox" name="copy" id="copy" checked> Copiar para a Área de Transferência</label></div>
+		</div>
+
+		<div class="output geradorsenha">
+			<input type="button" value="Gerar" id="btnPw" class="geradorsenha btnPw">
+			<input type="text" id="r1" class="resultado geradorsenha" placeholder="A senha aparecerá aqui" onclick="select()">
+		</div>
+
+		<div class="rodape geradorsenha">
+			<a href="index.html">Voltar</a>
+		</div>
+
+	</div>
+	<!-- class="container" -->
+
+</body>
+
+</html>

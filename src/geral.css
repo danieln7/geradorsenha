@@ -1,0 +1,75 @@
+body {
+	font-family: "Arial";
+}
+
+.container,
+.cabecalho,
+.main,
+.input,
+.rodape,
+.buttons,
+.output {
+	padding: 10px;
+}
+
+ul.indice {
+	margin: 0;
+	padding-left: 20px;
+}
+
+.indice>.item {
+	margin: 10px;
+}
+
+.cabecalho {
+	font-weight: bold;
+}
+
+.resultado {
+	background-color: #e2e2e2;
+	border: 1px solid #9b9b9b;
+}
+
+.variavel {
+	width: 60px;
+	border: 1px solid #9b9b9b;
+}
+
+.resultado.porcentagem {
+	width: 60px;
+}
+
+.resultado.hspackval {
+	width: 100px;
+	padding: 3px;
+	text-align: center;
+}
+
+.geradorsenha>.item {
+	padding-top: 5px;
+}
+
+.resultado.geradorsenha {
+	width: 200px;
+	margin-top: 5px;
+	padding: 5px;
+	display: block;
+}
+
+/* remove as setas dos campos numéricos decimais */
+
+.decimal::-webkit-inner-spin-button,
+.decimal::-webkit-outer-spin-button {
+	-webkit-appearance: none !important;
+	margin: 0 !important;
+	-moz-appearance: textfield !important;
+}
+
+button,
+input[type="button"] {
+	cursor: pointer;
+}
+
+label {
+	cursor: pointer;
+}
